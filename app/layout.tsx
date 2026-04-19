@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AI 爆款文案生成器",
@@ -9,8 +8,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default function RootLayout({
@@ -20,6 +17,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
+      <head>
+        <style>{`
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        `}</style>
+      </head>
       <body>{children}</body>
     </html>
   );
