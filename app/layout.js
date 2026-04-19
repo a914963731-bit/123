@@ -1,15 +1,9 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
+export const metadata = {
   title: "AI 爆款文案生成器",
   description: "一键生成爆款标题 + 情绪文案 + 热门标签",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }) {
   return (
     <html lang="zh-CN">
       <head>
