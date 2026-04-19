@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prebuild": "npm install",
     "dev": "next dev",
-    "build": "next build",
+    "build": "node build.js",
     "start": "next start"
   },
   "dependencies": {
