@@ -100,6 +100,63 @@
       color: #666;
       font-size: 14px;
     }
+    /* 弹窗样式 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #0f0f23;
+      border: 4px solid #e94560;
+      padding: 40px;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 10px 10px 0 #000;
+    }
+    .modal-title {
+      color: #e94560;
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+    .modal-text {
+      color: #fff;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .modal-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      background: #1a1a2e;
+      border: 3px solid #fff;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .modal-btn {
+      padding: 15px 40px;
+      font-size: 18px;
+      font-weight: 900;
+      background: #e94560;
+      color: #fff;
+      border: 4px solid #fff;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #000;
+    }
+    .modal-error {
+      color: #ff4444;
+      font-size: 14px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -124,8 +181,41 @@
 
   <footer class="footer">Made with 🔥 by AI</footer>
 
+  <!-- 密码弹窗 -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h2 class="modal-title">🔒 次数已用完</h2>
+      <p class="modal-text">请输入密码解锁无限使用</p>
+      <input type="password" id="passwordInput" class="modal-input" placeholder="输入密码">
+      <button class="modal-btn" onclick="checkPassword()">解锁</button>
+      <p id="modalError" class="modal-error" style="display:none;">密码错误，请重试</p>
+    </div>
+  </div>
+
   <script>
     let count = 0;
+    let unlocked = localStorage.getItem('unlocked') === 'true';
+
+    function showModal() {
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('passwordInput').value = '';
+      document.getElementById('modalError').style.display = 'none';
+    }
+
+    function hideModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    function checkPassword() {
+      const password = document.getElementById('passwordInput').value;
+      if (password === '246810') {
+        unlocked = true;
+        localStorage.setItem('unlocked', 'true');
+        hideModal();
+      } else {
+        document.getElementById('modalError').style.display = 'block';
+      }
+    }
 
     async function handleGenerate() {
       const input = document.getElementById('input').value;
@@ -135,8 +225,8 @@
       const result = document.getElementById('result');
 
       if (!input) return;
-      if (count >= 3) {
-        alert('今日次数已用完');
+      if (!unlocked && count >= 3) {
+        showModal();
         return;
       }
       count++;
