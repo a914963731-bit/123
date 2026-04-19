@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 爆款文案生成器</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      padding: 40px;
+    }
+    .title {
+      font-size: 48px;
+      font-weight: 900;
+      color: #e94560;
+      text-align: center;
+      letter-spacing: 4px;
+      text-shadow: 4px 4px 0 #000, 8px 8px 0 #333;
+    }
+    .subtitle {
+      text-align: center;
+      color: #fff;
+      font-size: 18px;
+      margin: 10px 0 40px;
+      opacity: 0.8;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #0f0f23;
+      border: 4px solid #e94560;
+      padding: 30px;
+      box-shadow: 10px 10px 0 #000;
+    }
+    .label {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      display: block;
+    }
+    select, textarea {
+      width: 100%;
+      background: #1a1a2e;
+      border: 3px solid #fff;
+      color: #fff;
+      font-size: 16px;
+      padding: 12px 15px;
+      outline: none;
+    }
+    textarea {
+      height: 80px;
+      resize: none;
+      margin-bottom: 15px;
+    }
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 18px 40px;
+      font-size: 22px;
+      font-weight: 900;
+      background: #e94560;
+      color: #fff;
+      border: 4px solid #fff;
+      cursor: pointer;
+      box-shadow: 6px 6px 0 #000;
+      letter-spacing: 2px;
+    }
+    button:disabled {
+      background: #333;
+      cursor: not-allowed;
+    }
+    .result {
+      max-width: 700px;
+      margin: 40px auto 0;
+      background: #0f0f23;
+      border: 4px solid #00ff88;
+      padding: 30px;
+      box-shadow: 10px 10px 0 #000;
+    }
+    .result-title {
+      color: #00ff88;
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+    .result-content {
+      white-space: pre-wrap;
+      color: #fff;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title">🔥 AI 爆款文案生成器 🔥</h1>
+  <p class="subtitle">一键生成爆款标题 + 情绪文案 + 热门标签</p>
+
+  <div class="container">
+    <label class="label">💎 输入你的主题</label>
+    <select id="platform">
+      <option>小红书</option>
+      <option>抖音</option>
+      <option>通用</option>
+    </select>
+    <textarea id="input" placeholder="例如：减肥、副业、赚钱、恋爱、职场..."></textarea>
+    <button id="btn" onclick="handleGenerate()">🚀 一键生成爆款</button>
+  </div>
+
+  <div id="resultBox" class="result" style="display:none;">
+    <h2 class="result-title">✅ 爆款文案已生成</h2>
+    <pre id="result" class="result-content"></pre>
+  </div>
+
+  <footer class="footer">Made with 🔥 by AI</footer>
+
+  <script>
+    let count = 0;
+
+    async function handleGenerate() {
+      const input = document.getElementById('input').value;
+      const platform = document.getElementById('platform').value;
+      const btn = document.getElementById('btn');
+      const resultBox = document.getElementById('resultBox');
+      const result = document.getElementById('result');
+
+      if (!input) return;
+      if (count >= 3) {
+        alert('今日次数已用完');
+        return;
+      }
+      count++;
+
+      btn.disabled = true;
+      btn.textContent = '⚡ 生成中...';
+      resultBox.style.display = 'none';
+
+      try {
+        const res = await fetch('https://open.bigmodel.cn/api/anthropic/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer 4e4f6254033a4e97a34544769670a141.WKi2gg6jygdXgZUs'
+          },
+          body: JSON.stringify({
+            model: 'claude-3-haiku-20240307',
+            max_tokens: 1024,
+            messages: [{
+              role: 'user',
+              content: `你是一个专业自媒体爆款写手
+请围绕这个主题生成内容：
+
+主题：${input}
+平台：${platform}
+
+要求：
+【标题】
+- 给我3个非常吸引点击的标题
+- 要有情绪、冲突、反转
+- 让人忍不住点开
+
+【正文】
+- 用口语化表达
+- 有故事感
+- 让用户产生共鸣
+
+【标签】
+- 给5个热门标签
+
+输出要结构清晰，方便直接复制使用`
+            }]
+          })
+        });
+        const data = await res.json();
+        result.textContent = data?.content?.[0]?.text || '生成失败';
+        resultBox.style.display = 'block';
+      } catch (error) {
+        result.textContent = '请求出错，请稍后重试';
+        resultBox.style.display = 'block';
+      }
+
+      btn.disabled = false;
+      btn.textContent = '🚀 一键生成爆款';
+    }
+  </script>
+</body>
+</html>
